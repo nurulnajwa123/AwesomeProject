@@ -34,7 +34,7 @@ export default class ApiPage extends React.Component {
        <TouchableOpacity style={styles.list}>
           <Text style={styles.lightText}>{data.item.username}</Text>
           <Text style={styles.lightText}>{data.item.email}</Text>
-        </TouchableOpacity>
+       </TouchableOpacity>
 
     render(){
       return(
@@ -47,15 +47,3 @@ export default class ApiPage extends React.Component {
         </View>
         )}
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-   },
-  list:{
-    paddingVertical: 5,
-    margin: 10,
-   }
-});

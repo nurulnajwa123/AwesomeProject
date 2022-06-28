@@ -1,21 +1,20 @@
-import React, {Component} from 'react';
+//login b
+import React, {useState} from 'react';
 import {
-SafeAreaView,
-StyleSheet,
 View,
 Text,
 TextInput,
-TouchableOpacity
-}from 'react-native';
-import Styles from './src/styles/styles';
- 
- 
-export const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-   
+TouchableOpacity,
+} from 'react-native';
+import styles from '../styles/styles';
+
+
+  export default function  Login ({navigation}){
+   const [username, setUsername] = useState('')
+   const [password, setPassword] = useState('')
+  
     return (
-    <SafeAreaView style={{flex: 5}}>
+    
     <View style={styles.container}>
         <Text style={styles.highlight}>LOGIN</Text>
         
@@ -25,27 +24,32 @@ export const Login = () => {
             placeholder="Username" 
             textAlign="center"
             placeholderTextColor="#000"
-            onChangeText={(username) => this.setState({ username })}/>
+            value={username}
+            onChangeText={(value) => setUsername({value})}/>
         </View>
 
         <View style={styles.inputView}>
           <TextInput  
             style={styles.inputText}
             placeholder="Password"
+            secureTextEntry
             textAlign="center"
             placeholderTextColor="#000"
-            secureTextEntry={true}
-            onChangeText={(password) => this.setState({ password })}/>
+            value={password}
+            onChangeText={(value) => setPassword({value})}/>
         </View>
 
         <TouchableOpacity style={styles.loginButton}
-            onPress={() => this.props.navigation.navigate('AfterLogin')}>
+            onPress={() => {navigation.navigate('Dashboard')}}>
             <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
 
-
+        <TouchableOpacity onPress={()=>{navigation.navigate('SignUp')}}> 
+        <Text style={styles.SignUpText}>Register</Text>
+      </TouchableOpacity>
       
       </View>      
-    </SafeAreaView>
+
     );
   };
+ 
