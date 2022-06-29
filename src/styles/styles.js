@@ -137,7 +137,17 @@ export default StyleSheet.create({
       color:"#000000",
       marginBottom:15,
       marginTop:10,
-
-    },
+     },
+     centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      backgroundColor: 'rgba(0,0,0,0.6)'
+  },
+     modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 15,
+      padding: 10,
+  },
     });
       

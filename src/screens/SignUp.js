@@ -1,4 +1,3 @@
-// login
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -10,54 +9,60 @@ import {
     Image
 } from 'react-native';
 import styles from '../styles/styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalView from '../component/ModalView';
 
-export default function SignUp({ navigation }) {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    useEffect(() => {
-        getData();
-    }, []);
-
-    const getData = () => {
-        try {
-            AsyncStorage.getItem('UserData')
-                .then(value => {
-                    if (value != null) {
-                        navigation.navigate('SignUp');
-                    }
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    const setData = async () => {
-        if (username.length == 0 || email.length == 0 || password.length == 0) {
-            Alert.alert('Please complete your registration.')
-        } else {
-            try {
-                var user = {
-                    username: username,
-                    email: email,
-                    password: password
-                }
-                await AsyncStorage.setItem('UserData', JSON.stringify(user));
-                Alert.alert ('Successfully Registered');
-                navigation.navigate('Login');
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
-
-    
+  
+  export default function  SignUp ({navigation}){
+    const [users, setUsers] = useState([]);
+    const [data, setData] = useState([]);
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
+ 
+ 
+     const getPosts = async () => {
+       setLoading(true)
+       await fetch('http://jsonplaceholder.typicode.com/users')
+         .then((res) => res.json())
+         .then((res) => {
+           setData(res);
+         })
+         .catch(e => console.log(e))
+       setLoading(false)
+     }
+   
+     const addPost = (username, email, password) => {
+       fetch('http://jsonplaceholder.typicode.com/users', {
+         method: "POST",
+         headers,
+         body: JSON.stringify({
+           "username": username,
+           "email": email,
+           "password": password,
+         })
+       }).then((response) => response.json())
+         .then(jsonResponse => {setUsers(jsonResponse),
+          console.log('Registered:', jsonResponse)})
+         .catch(error => { console.log(error) })
+     }
+ 
+      useEffect(() => {
+         getPosts();
+       }, [])
+ 
 
     return (
-        <View style={styles.register}>
-            <Text style={styles.registerHighlight}>REGISTRATION</Text>
+      <ModalView
+        visible={visible}
+        onDismiss={() => {setVisible(false)}}
+        onSubmit={() => {addPost(username, email, password) }}
+        cancelable 
+      >
+ 
+     <Text style={styles.registerHighlight}>REGISTRATION</Text>
             
             <Text style={styles.SignUpText}>Username:</Text>
             <View style={styles.inputView}>
@@ -101,14 +106,8 @@ export default function SignUp({ navigation }) {
                   source={require('../asset/img/closeIcon.png')}/>
                 </TouchableOpacity>  
             </View>
-         <View style={{ flexDirection:"row" }}>
-            <TouchableOpacity style={styles.button}
-            onPress={setData}>
-            <Text style={styles.loginText}>Submit</Text>
-            </TouchableOpacity>
-        </View> 
-
-        </View>
-    )
-}
+            
+       </ModalView>
+    
+    )}
 
