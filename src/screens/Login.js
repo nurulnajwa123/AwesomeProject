@@ -1,157 +1,109 @@
-//login b
-import React, {useState, useEffect} from 'react';
-import {
-View,
-Text,
-TextInput,
-TouchableOpacity,
-Image,
-Alert
+import React, {useState} from 'react';
+import {View,
+  Text, 
+  Alert, 
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
+// import Try from '../component/Try';
 import styles from '../styles/styles';
-import ModalView from '../component/ModalView';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const Login = ({navigation}) => {
+  const [user, setUser] = useState({username: '', password: ''});
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-const url = 'http://jsonplaceholder.typicode.com/users'
-
-const headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-};
-
-  export default function  Login ({navigation}){
-   const [users, setUsers] = useState([]);
-   const [data, setData] = useState([]);
-   const [username, setUsername] = useState('')
-   const [password, setPassword] = useState('')
-   const [email, setEmail] = useState('')
-   const [visible, setVisible] = useState(false);
-   const [loading, setLoading] = useState(false);
-
-
-    const getPosts = async () => {
-      setLoading(true)
-      await fetch('http://jsonplaceholder.typicode.com/users')
-        .then((res) => res.json())
-        .then((res) => {
-          setData(res);
-        })
-        .catch(e => console.log(e))
-      setLoading(false)
+  const validate = async () => {
+    let isValid = true;
+    if (!user.username) {
+      handleError('Please input username', 'username');
+      isValid = false;
     }
-  
-    const addPost = (username, email, password) => {
-      fetch('http://jsonplaceholder.typicode.com/users', {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          "username": username,
-          "email": email,
-          "password": password,
-        })
-      }).then((response) => response.json())
-        .then(jsonResponse => {setUsers(jsonResponse),
-         console.log('Registered:', jsonResponse)})
-        .catch(error => { console.log(error) })
+    if (!user.password) {
+      handleError('Please input password', 'password');
+      isValid = false;
     }
+    if (isValid) {
+      SignIn();
+    }
+  };
 
-     useEffect(() => {
-        getPosts();
-      }, [])
+  const SignIn = () => {
+    setLoading(true);
+    setTimeout(async () => {
+      setLoading(false);
+      let userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        userData = JSON.parse(userData);
+        if (
+          user.username == userData.username &&
+          user.password == userData.password
+        ) {
+          navigation.navigate('Dashboard');
+          AsyncStorage.setItem(
+            'userData',
+            JSON.stringify({...userData, loggedIn: true}),
+          );
+        } else {
+          Alert.alert('Error', 'Invalid Details');
+        }
+      } else {
+        Alert.alert('Error', 'User does not exist');
+      }
+    }, 3000);
+  };
 
+  const handleOnchange = (text, input) => {
+    setUser(prevState => ({...prevState, [input]: text}));
+  };
+
+  const handleError = (error, input) => {
+    setErrors(prevState => ({...prevState, [input]: error}));
+  };
   return (
-    
     <View style={styles.container}>
-        <Text style={styles.highlight}>LOGIN</Text>
-        
+    <Text style={styles.highlight}>LOGIN</Text>
+         
         <View style={styles.inputView}>
-          <TextInput  
+        <TextInput
             style={styles.inputText}
             placeholder="Username" 
             textAlign="center"
             placeholderTextColor="#000"
-            value={username}
-            onChangeText={(value) => setUsername({value})}/>
+            onChangeText={text => handleOnchange(text, 'username')}
+            onFocus={() => handleError(null, 'username')}
+            error={errors.username}
+          />
         </View>
-
+         
         <View style={styles.inputView}>
-          <TextInput  
+        <TextInput
             style={styles.inputText}
-            placeholder="Password"
-            secureTextEntry
+            placeholder="Password" 
             textAlign="center"
             placeholderTextColor="#000"
-            value={password}
-            onChangeText={(value) => setPassword({value})}/>
+            onChangeText={text => handleOnchange(text, 'password')}
+            onFocus={() => handleError(null, 'password')}
+            error={errors.password}
+            secureTextEntry
+          />
         </View>
-
+ 
         <TouchableOpacity style={styles.loginButton}
-           onPress={() => {navigation.navigate('Dashboard')}}>
+          onPress={validate}>
             <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
-      
-
-        <TouchableOpacity onPress={() => setVisible(true)}>
-        <Text style={styles.SignUpText}>Register</Text>
-      </TouchableOpacity>
-
-        <ModalView
-        visible={visible}
-        onDismiss={() => {setVisible(false)}}
-        onSubmit={() => {addPost(username, email, password) }}
-        cancelable 
-      >
-
-     <Text style={styles.registerHighlight}>REGISTRATION</Text>
-            
-            <Text style={styles.SignUpText}>Username:</Text>
-            <View style={styles.inputView}>
-              <TextInput 
-                style={styles.inputText}
-                placeholderTextColor="#000"
-                value={username}
-                onChangeText={(value) => setUsername({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setUsername ('')}>
-                <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity> 
-            </View>
-    
-            <Text style={styles.SignUpText}>Email:</Text>
-            <View style={styles.inputView}>
-              <TextInput  
-                style={styles.inputText}
-                placeholderTextColor="#000"
-                value={email}
-                onChangeText={(value) => setEmail({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setEmail ('')}>
-                <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity> 
-            </View>
-    
-            <Text style={styles.SignUpText}>Password:</Text>
-            <View style={styles.inputView}>
-              <TextInput  
-                style={styles.inputText}
-                secureTextEntry
-                placeholderTextColor="#000"
-                value={password} 
-                onChangeText={(value) => setPassword({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setPassword ('')}>
-                  <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity>  
-            </View>
-            
-       </ModalView>
-   
-      
-      </View>      
-
-    );
-  };
  
+         <TouchableOpacity 
+          onPress={() => {navigation.navigate('SignUp')}}> 
+        <Text style={styles.SignUpText}>Register</Text>
+        </TouchableOpacity>
+        
+   </View>
+     
+
+  );
+};
+
+export default Login;

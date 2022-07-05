@@ -1,4 +1,3 @@
-//login 1st page
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
@@ -19,7 +18,7 @@ export default StyleSheet.create({
       width:"90%",
       backgroundColor:"#cdd0dd",
       height:50,
-      marginBottom:10,
+      marginBottom:15,
       justifyContent:"center",
       padding:20,
     },
@@ -81,7 +80,8 @@ export default StyleSheet.create({
       fontWeight:"bold",
       fontSize:25,
       color:"#000000",
-      marginBottom:30,
+      marginBottom:20,
+      marginTop:30,
     },
     clearButton:{
       width:"40%",
@@ -92,6 +92,7 @@ export default StyleSheet.create({
       marginTop:40,
       marginBottom:10,
     },
+
     //Detail
     containerDetail:{
       flex: 2,
@@ -149,5 +150,6 @@ export default StyleSheet.create({
       borderRadius: 15,
       padding: 10,
   },
+  
     });
       

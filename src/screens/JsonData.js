@@ -1,17 +1,5 @@
-import React, {useState} from 'react';
-import{
-    SafeAreaView, 
-    StyleSheet,
-    View,
-    Text,
-    FlatList,
-    Modal,
-    TouchableOpacity,
-    TextInput
-} from 'react-native';
-import styles from '../../src/styles/styles';
-
-const DATA= [
+const user = 
+[
   {
     id: 1,
     name: "Leanne Graham",
@@ -85,43 +73,56 @@ const DATA= [
 ]
 
 
-const EditProfile = () => {
+
+import React, {useState} from 'react';
+import{
+    SafeAreaView, 
+    StyleSheet,
+    View,
+    Text,
+    FlatList,
+    Modal,
+    TouchableOpacity,
+    TextInput
+} from 'react-native';
+import styles from '../../src/styles/styles';
+
+const DATA= [
+    {id :1, text: 'Item One'},
+    {id :2, text: 'Item Two'},
+    {id :3, text: 'Item Three'},
+    {id :4, text: 'Item FOur'},
+]
+
+const Dashboard = () => {
     const [data, setData] = useState (DATA)
     const [isRender, setisRender] = useState (false);
     const [isModalVisible, setisModalVisible] = useState (false);
-    const [username, setUsername] = useState ();
-    const [email, setEmail] = useState ();
-    const [phone, setPhone] = useState ();
+    const [inputText, setinputText] = useState ();
     const [editItem, seteditItem] = useState ();
  
   const onPressItem=(item)=> {
     setisModalVisible(true);
-    setUsername(item.username)
-    setEmail(item.email)
-    setPhone(item.phone)
+    setinputText(item.text)
     seteditItem(item.id)
   }
 
-    const renderItem = ({item})=> {
+    const renderItem = ({item, index})=> {
         return(
             <TouchableOpacity
            style={styles.item}
            onPress={()=> onPressItem(item)}
             >
-            <Text style={styles.text}>{item.username}</Text>
-            <Text style={styles.text}>{item.email}</Text>
-            <Text style={styles.text}>{item.phone}</Text>
+            <Text style={styles.text}>{item.text}</Text>
             </TouchableOpacity>
         )
     }
 
 const handleEditItem=(editItem)=>{
 
-const newData= data.map(item=> {
+  const newData= data.map(item=> {
 if (item.id==editItem) {
-  item.username= username;
-  item.email= email;
-  item.phone= phone;
+  item.text= inputText;
   return item;
 }
 return item;
@@ -130,7 +131,8 @@ return item;
   setisRender(!isRender)
 }
 
- const onPressSaveEdit=() => {
+
+const onPressSaveEdit=() => {
 handleEditItem(editItem);
 setisModalVisible(false);
     }
@@ -143,49 +145,31 @@ setisModalVisible(false);
         renderItem= {renderItem}
         extraData = {isRender}
         />
-
-        
-    <Modal
+        <Modal
         animationType= 'fade'
         visible={isModalVisible}
         onRequestClose={()=> setisModalVisible(false)}
         >
-     <View style={styles.modalView}>
-        <Text style={styles.hightlight2}> Update Profile </Text>
+        <View style={styles.modalView}>
+        <Text style={styles.text}> Change Text: </Text>
         <TextInput style={styles.textInput}
-        onChangeText={(username)=>setUsername(username)}
-        defaultValue= {(username)}
-        editable={true}
-        multiline ={false}
-        />
-
-      <TextInput style={styles.textInput}
-        onChangeText={(email)=>setEmail(email)}
-        defaultValue= {(email)}
-        editable={true}
-        multiline ={false}
-        />
-
-      <TextInput style={styles.textInput}
-        onChangeText={(phone)=>setPhone(phone)}
-        defaultValue= {(phone)}
+        onChangeText={(text)=>setinputText(text)}
+        defaultValue= {(inputText)}
         editable={true}
         multiline ={false}
         />
 
         <TouchableOpacity onPress={()=> onPressSaveEdit()}
-        style= {styles.loginButton}>
+        style= {styles.touchableSave}       
+        >
 
-        <Text style= {styles.loginText}> Save</Text>
+        <Text style= {styles.text}> Save</Text>
         </TouchableOpacity>
         
-     </View>
+        </View>
         </Modal>
         </SafeAreaView>
     );
 };
 
-export default EditProfile;
-
-
-
+export default Dashboard;

@@ -16,12 +16,15 @@ const ModalView = ({ children, onSubmit, cancelable, visible = false, onDismiss,
                         {children}
                     </View>
                     <View style={{ alignSelf: 'flex-end', alignItems: 'center',flexDirection: 'row', }}>
-                        {cancelable && (<TouchableOpacity
+                        {cancelable && (
+                        <TouchableOpacity
                             style={{ ...styles.button, backgroundColor: 'white' }}
                             onPress={onDismiss}>
                             <Text style={[styles.textStyle, { color: '#f44' }]}>Cancel</Text>
                         </TouchableOpacity>)}
-                        {onSubmit && (<TouchableOpacity
+                        
+                        {onSubmit && (
+                        <TouchableOpacity
                             style={styles.button}
                             onPress={onSubmit}>
                             <Text style={styles.textStyle}>{submitText}</Text>

@@ -85,10 +85,11 @@ const DATA= [
 ]
 
 
-const EditProfile = () => {
+const Dashboard = () => {
     const [data, setData] = useState (DATA)
     const [isRender, setisRender] = useState (false);
     const [isModalVisible, setisModalVisible] = useState (false);
+    const [inputText, setinputText] = useState ();
     const [username, setUsername] = useState ();
     const [email, setEmail] = useState ();
     const [phone, setPhone] = useState ();
@@ -102,7 +103,7 @@ const EditProfile = () => {
     seteditItem(item.id)
   }
 
-    const renderItem = ({item})=> {
+    const renderItem = ({item, index})=> {
         return(
             <TouchableOpacity
            style={styles.item}
@@ -117,7 +118,7 @@ const EditProfile = () => {
 
 const handleEditItem=(editItem)=>{
 
-const newData= data.map(item=> {
+  const newData= data.map(item=> {
 if (item.id==editItem) {
   item.username= username;
   item.email= email;
@@ -130,7 +131,8 @@ return item;
   setisRender(!isRender)
 }
 
- const onPressSaveEdit=() => {
+
+const onPressSaveEdit=() => {
 handleEditItem(editItem);
 setisModalVisible(false);
     }
@@ -143,15 +145,13 @@ setisModalVisible(false);
         renderItem= {renderItem}
         extraData = {isRender}
         />
-
-        
-    <Modal
+        <Modal
         animationType= 'fade'
         visible={isModalVisible}
         onRequestClose={()=> setisModalVisible(false)}
         >
-     <View style={styles.modalView}>
-        <Text style={styles.hightlight2}> Update Profile </Text>
+        <View style={styles.modalView}>
+        <Text style={styles.text}> Change Text: </Text>
         <TextInput style={styles.textInput}
         onChangeText={(username)=>setUsername(username)}
         defaultValue= {(username)}
@@ -159,33 +159,17 @@ setisModalVisible(false);
         multiline ={false}
         />
 
-      <TextInput style={styles.textInput}
-        onChangeText={(email)=>setEmail(email)}
-        defaultValue= {(email)}
-        editable={true}
-        multiline ={false}
-        />
-
-      <TextInput style={styles.textInput}
-        onChangeText={(phone)=>setPhone(phone)}
-        defaultValue= {(phone)}
-        editable={true}
-        multiline ={false}
-        />
-
         <TouchableOpacity onPress={()=> onPressSaveEdit()}
-        style= {styles.loginButton}>
+        style= {styles.touchableSave}       
+        >
 
-        <Text style= {styles.loginText}> Save</Text>
+        <Text style= {styles.text}> Save</Text>
         </TouchableOpacity>
         
-     </View>
+        </View>
         </Modal>
         </SafeAreaView>
     );
 };
 
-export default EditProfile;
-
-
-
+export default Dashboard;

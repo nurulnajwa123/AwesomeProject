@@ -1,113 +1,145 @@
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState} from 'react';
 import {
-    View,
-    StyleSheet,
-    Text,
-    TextInput,
-    Alert,
-    TouchableOpacity,
-    Image
+  View,
+  Text,
+  TextInput,
+  Keyboard,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import styles from '../styles/styles';
-import ModalView from '../component/ModalView';
 
+const SignUp = ({navigation}) => {
+  const [user, setUser] = useState({
+    email: '',
+    username: '',
+    phone: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+ 
+  const validate = () => {
+    Keyboard.dismiss();
+    let isValid = true;
 
-  
-  export default function  SignUp ({navigation}){
-    const [users, setUsers] = useState([]);
-    const [data, setData] = useState([]);
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [email, setEmail] = useState('')
-    const [visible, setVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
+    if (!user.username) {
+      handleError('Please enter your username', 'username');
+      isValid = false;
+    }
+
+    if (!user.email) {
+      handleError('Please enter your', 'email');
+      isValid = false;
+    } else if (!user.email.match(/\S+@\S+\.\S+/)) {
+      handleError('Please enter a valid email', 'email');
+      isValid = false;
+    }
+
+     if (!user.phone) {
+      handleError('Please enter your phone number', 'phone');
+      isValid = false;
+    }
+
+    if (!user.password) {
+      handleError('Please enter your password', 'password');
+      isValid = false;
+    } else if (user.password.length < 5) {
+      handleError('Min password length of 5', 'password');
+      isValid = false;
+    }
+
+    if (isValid) {
+      register();
+    }
+  };
+
+  const register = () => {
+    setLoading(true);
+    setTimeout(() => {
+      try {
+        setLoading(false);
+        AsyncStorage.setItem('userData', JSON.stringify(user));
+        navigation.navigate('Login');
+      } catch (error) {
+        Alert.alert('Error', 'Something went wrong');
+      }
+    }, 3000);
+  };
  
+
+  const handleOnchange = (text, input) => {
+    setUser(prevState => ({...prevState, [input]: text}));
+  };
+  const handleError = (error, input) => {
+    setErrors(prevState => ({...prevState, [input]: error}));
+  };
+
+  return (
+    <View style={styles.container}>
+    <Text style={styles.registerHighlight}>REGISTRATION</Text>
+
+     
+      <Text style={styles.SignUpText}>Username:</Text>
+      <View style={styles.inputView}>
+        <TextInput
+            style={styles.inputText}
+            textAlign="center"
+            placeholderTextColor="#000"
+            onChangeText={text => handleOnchange(text, 'username')}
+            onFocus={() => handleError(null, 'username')}
+            error={errors.username}
+          />
+        </View>
+
+        <Text style={styles.SignUpText}>Email:</Text>
+         <View style={styles.inputView}>
+        <TextInput
+            style={styles.inputText}
+            textAlign="center"
+            placeholderTextColor="#000"
+            onChangeText={text => handleOnchange(text, 'email')}
+            onFocus={() => handleError(null, 'email')}
+            error={errors.email}
+          />
+        </View>
  
-     const getPosts = async () => {
-       setLoading(true)
-       await fetch('http://jsonplaceholder.typicode.com/users')
-         .then((res) => res.json())
-         .then((res) => {
-           setData(res);
-         })
-         .catch(e => console.log(e))
-       setLoading(false)
-     }
+        <Text style={styles.SignUpText}>Phone:</Text>
+         <View style={styles.inputView}>
+        <TextInput
+            style={styles.inputText}
+            textAlign="center"
+            placeholderTextColor="#000"
+            onChangeText={text => handleOnchange(text, 'phone')}
+            onFocus={() => handleError(null, 'phone')}
+            error={errors.phone}
+          />
+        </View>
+
+        <Text style={styles.SignUpText}>Password:</Text>
+         <View style={styles.inputView}>
+        <TextInput
+            style={styles.inputText}
+            textAlign="center"
+            placeholderTextColor="#000"
+            onChangeText={text => handleOnchange(text, 'password')}
+            onFocus={() => handleError(null, 'password')}
+            error={errors.password}
+            secureTextEntry
+          />
+        </View>
+          
+          <TouchableOpacity style={styles.loginButton}
+          onPress={validate}>
+            <Text style={styles.loginText}>Register</Text>
+          </TouchableOpacity>
+
+       
    
-     const addPost = (username, email, password) => {
-       fetch('http://jsonplaceholder.typicode.com/users', {
-         method: "POST",
-         headers,
-         body: JSON.stringify({
-           "username": username,
-           "email": email,
-           "password": password,
-         })
-       }).then((response) => response.json())
-         .then(jsonResponse => {setUsers(jsonResponse),
-          console.log('Registered:', jsonResponse)})
-         .catch(error => { console.log(error) })
-     }
- 
-      useEffect(() => {
-         getPosts();
-       }, [])
- 
+    </View>
+  );
+};
 
-    return (
-      <ModalView
-        visible={visible}
-        onDismiss={() => {setVisible(false)}}
-        onSubmit={() => {addPost(username, email, password) }}
-        cancelable 
-      >
- 
-     <Text style={styles.registerHighlight}>REGISTRATION</Text>
-            
-            <Text style={styles.SignUpText}>Username:</Text>
-            <View style={styles.inputView}>
-              <TextInput 
-                style={styles.inputText}
-                placeholderTextColor="#000"
-                value={username}
-                onChangeText={(value) => setUsername({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setUsername ('')}>
-                <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity> 
-            </View>
-    
-            <Text style={styles.SignUpText}>Email:</Text>
-            <View style={styles.inputView}>
-              <TextInput  
-                style={styles.inputText}
-                placeholderTextColor="#000"
-                value={email}
-                onChangeText={(value) => setEmail({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setEmail ('')}>
-                <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity> 
-            </View>
-    
-            <Text style={styles.SignUpText}>Password:</Text>
-            <View style={styles.inputView}>
-              <TextInput  
-                style={styles.inputText}
-                secureTextEntry
-                placeholderTextColor="#000"
-                value={password} 
-                onChangeText={(value) => setPassword({value})}/>
-                <TouchableOpacity style={styles.closeButton}
-                  onPress={()=>setPassword ('')}>
-                  <Image style={styles.closeIcon}
-                  source={require('../asset/img/closeIcon.png')}/>
-                </TouchableOpacity>  
-            </View>
-            
-       </ModalView>
-    
-    )}
-
+export default SignUp;
